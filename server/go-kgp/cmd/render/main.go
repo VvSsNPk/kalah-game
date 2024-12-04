@@ -23,16 +23,14 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"log"
-	"os"
-	"runtime"
-	"sync"
-
 	"go-kgp"
-
 	"go-kgp/cmd"
 	"go-kgp/db"
 	"go-kgp/web"
+	"log/slog"
+	"os"
+	"runtime"
+	"sync"
 )
 
 type render struct{}
@@ -58,9 +56,11 @@ func (*render) Start(st *cmd.State, conf *cmd.Conf) {
 				file, err := os.Create(fn)
 				err = web.RenderGame(st, ctx, int(game.Id), file)
 				if err != nil {
-					log.Fatal(err)
+					// log.Fatal(err)
+					slog.Error(err.Error())
 				}
-				log.Println("Render", file.Name())
+				// log.Println("Render", file.Name())
+				slog.Info("Render", "file:", file.Name())
 				file.Close()
 			}
 			wg.Done()

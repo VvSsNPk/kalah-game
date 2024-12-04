@@ -21,15 +21,12 @@ package main
 
 import (
 	"flag"
-	"fmt"
-	"os"
-	"strconv"
-
-	cmd "go-kgp/cmd"
 	"go-kgp/db"
 	"go-kgp/proto"
 	"go-kgp/sched"
 	"go-kgp/web"
+
+	cmd "go-kgp/cmd"
 )
 
 func main() {

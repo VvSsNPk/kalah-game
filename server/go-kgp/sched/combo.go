@@ -21,14 +21,13 @@ package sched
 
 import (
 	"fmt"
-	"io"
-	"log"
-	"sort"
-	"sync/atomic"
-
 	"go-kgp"
 	"go-kgp/cmd"
 	"go-kgp/sched/isol"
+	"io"
+	"log/slog"
+	"sort"
+	"sync/atomic"
 )
 
 type Composable interface {
@@ -48,17 +47,21 @@ type Combo struct {
 
 func (c *Combo) Start(st *cmd.State, conf *cmd.Conf) {
 	if len(c.agents) == 0 {
-		log.Fatal("No agents to run the tournament with")
+		// log.Fatal("No agents to run the tournament with")
+		slog.Error("No agents to run the tournament with")
 	}
 
 	next := c.agents
 	for len(c.agents) > 0 {
 		m := c.scheds[c.now]
-		log.Printf("Starting %s round with %d agents (%s)", m, len(next), next)
+		// log.Printf("Starting %s round with %d agents (%s)", m, len(next), next)
+		slog.Info("Starting", "round :", m, "no:", len(next), "agents:", next)
 		m.Take(next)
-		kgp.Debug.Println("Starting", m)
+		// kgp.Debug.Println("Starting", m)
+		slog.Debug("Starting ", "start", m)
 		m.Start(st, conf)
-		kgp.Debug.Println("Shutting down", m)
+		// kgp.Debug.Println("Shutting down", m)
+		slog.Debug("Shutting down", "shutdown:", m)
 		m.Shutdown()
 		next = m.Give()
 
@@ -66,7 +69,8 @@ func (c *Combo) Start(st *cmd.State, conf *cmd.Conf) {
 			break
 		}
 	}
-	kgp.Debug.Println("Ending combo scheduler")
+	// kgp.Debug.Println("Ending combo scheduler")
+	slog.Debug("Ending combo scheduler")
 	st.Kill()
 }
 
@@ -189,7 +193,8 @@ next round:`)
 }
 
 func (c *Combo) AddAgent(a isol.ControlledAgent) {
-	log.Println("Registered agent", a)
+	// log.Println("Registered agent", a)
+	slog.Info("Registered", "agent", a)
 	c.agents = append(c.agents, a)
 }
 
